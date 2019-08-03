@@ -1,5 +1,5 @@
 set(PMM_CONAN_MIN_VERSION 1.15.0 CACHE INTERNAL "Minimum Conan version we support")
-set(PMM_CONAN_MAX_VERSION 1.17.99 CACHE INTERNAL "Maximum Conan version we support")
+set(PMM_CONAN_MAX_VERSION 1.18.99 CACHE INTERNAL "Maximum Conan version we support")
 
 
 # Get Conan in a new virtualenv using the Python interpreter specified by the
@@ -359,16 +359,6 @@ function(_pmm_conan_get_settings out)
         message(FATAL_ERROR "Unable to detect compiler setting for Conan from CMake. (Unhandled compiler ID ${comp_id}).")
     endif ()
 
-    if (NOT CMAKE_CONFIGURATION_TYPES)
-        set(bt "${CMAKE_BUILD_TYPE}")
-        if (NOT bt)
-            _pmm_log("WARNING: CMAKE_BUILD_TYPE was not set explicitly. We'll install your dependencies as 'Debug'")
-            set(bt Debug)
-        endif ()
-        _pmm_log(DEBUG "Using build_type=${bt}")
-        list(APPEND ret build_type=${bt})
-    endif ()
-
     # Todo: Cross compiling
     if (NOT ARG_SETTINGS MATCHES ";?arch=")
         if (CMAKE_SIZEOF_VOID_P EQUAL 8)
@@ -395,26 +385,17 @@ function(_pmm_conan_get_settings out)
     set("${out}" "${ret}" PARENT_SCOPE)
 endfunction()
 
-
-function(_pmm_conan_install_1)
-    set(src "${CMAKE_CURRENT_SOURCE_DIR}")
-    set(bin "${CMAKE_CURRENT_BINARY_DIR}")
-    # Install the thing
-    # Do the regular install logic
-    get_filename_component(conan_inc "${bin}/conanbuildinfo.cmake" ABSOLUTE)
-    get_filename_component(conan_timestamp_file "${bin}/conaninfo.txt" ABSOLUTE)
-    get_filename_component(libman_inc "${bin}/libman.cmake" ABSOLUTE)
-    set_property(DIRECTORY APPEND PROPERTY CMAKE_CONFIGURE_DEPENDS "${conanfile}")
-
-    get_filename_component(profile_file "${bin}/pmm-conan.profile" ABSOLUTE)
+function(_pmm_conan_create_profile ${_build_type})
+    get_filename_component(_profile_file "${PMM_DIR}/_pmm-conan-${_build_type}.profile" ABSOLUTE)
     set(profile_lines "[settings]")
-
     # Get the settings for the profile
     _pmm_conan_get_settings(settings_lines)
     list(APPEND profile_lines "${settings_lines}")
     foreach (setting IN LISTS ARG_SETTINGS)
         list(APPEND profile_lines "${setting}")
     endforeach ()
+    # Add build type
+    list(APPEND profile_lines "build_type=${_build_type}")
 
     # Add the options to the profile
     list(APPEND profile_lines "" "[options]")
@@ -434,17 +415,30 @@ function(_pmm_conan_install_1)
     endforeach ()
 
     string(REPLACE ";" "\n" profile_content "${profile_lines}")
-    _pmm_write_if_different("${profile_file}" "${profile_content}")
-    set(profile_changed "${_PMM_DID_WRITE}")
+    _pmm_write_if_different("${_profile_file}" "${profile_content}")
+    set(profile_changed "${_PMM_DID_WRITE}" PARENT_SCOPE)
+    set(profile_file ${_profile_file} PARENT_SCOPE)
+
+endfunction()
+
+function(_pmm_conan_run_install _build_type _generator_name )
+    set(src "${CMAKE_CURRENT_SOURCE_DIR}")
+    set(bin "${CMAKE_CURRENT_BINARY_DIR}")
+    # Install the thing
+    # Do the regular install logic
+    get_filename_component(conan_timestamp_file "${bin}/conaninfo.txt" ABSOLUTE)
+    set_property(DIRECTORY APPEND PROPERTY CMAKE_CONFIGURE_DEPENDS "${conanfile}")
+
+    _pmm_conan_create_profile(${_build_type})
 
     _pmm_set_if_undef(ARG_BUILD missing)
     set(conan_args --profile "${profile_file}")
-    list(APPEND conan_args --generator cmake --build ${ARG_BUILD})
+    list(APPEND conan_args --generator ${_generator_name} --build ${ARG_BUILD})
     set(conan_install_cmd
             "${CMAKE_COMMAND}" -E env CONAN_LIBMAN_FOR=cmake
             "${PMM_CONAN_EXECUTABLE}" install "${src}" ${conan_args}
             )
-    set(prev_cmd_file "${PMM_DIR}/_prev_conan_install_cmd.txt")
+    set(prev_cmd_file "${PMM_DIR}/_prev_conan_install_cmd_${_build_type}.txt")
     set(do_install FALSE)
     if (EXISTS "${conan_timestamp_file}" AND "${conanfile}" IS_NEWER_THAN "${conan_timestamp_file}")
         _pmm_log(DEBUG "Need to run conan install: ${conanfile} is newer than the last install run")
@@ -477,8 +471,7 @@ function(_pmm_conan_install_1)
             file(WRITE "${prev_cmd_file}" "${conan_install_cmd}")
         endif ()
     endif ()
-    set(__conan_inc "${conan_inc}" PARENT_SCOPE)
-    set(__libman_inc "${libman_inc}" PARENT_SCOPE)
+
 endfunction()
 
 
@@ -497,8 +490,25 @@ macro(_pmm_conan_install)
         _pmm_log("We are being built by Conan, so we won't run the install step.")
         _pmm_log("Assuming ${__conan_inc} is present.")
     else ()
-        _pmm_conan_install_1()
+        if (CMAKE_CONFIGURATION_TYPES AND NOT CMAKE_BUILD_TYPE AND NOT ARGUMENTS_BUILD_TYPE)
+            get_filename_component(__conan_inc "${CMAKE_CURRENT_BINARY_DIR}/conanbuildinfo_multi.cmake" ABSOLUTE)
+            _pmm_log(WARNING "Using cmake-multi generator, this generator is experimental")
+            _pmm_log(WARNING "If it is broken open an issue here: https://github.com/AnotherFoxGuy/pmm/issues")
+            _pmm_conan_run_install("Debug"   "cmake_multi")
+            _pmm_conan_run_install("Release" "cmake_multi")
+        else ()
+            if (NOT "${CMAKE_BUILD_TYPE}")
+                _pmm_log("WARNING: CMAKE_BUILD_TYPE was not set explicitly. We'll install your dependencies as 'Debug'")
+                set(CMAKE_BUILD_TYPE Debug)
+            endif ()
+            get_filename_component(__conan_inc "${CMAKE_CURRENT_BINARY_DIR}/conanbuildinfo.cmake" ABSOLUTE)
+            _pmm_conan_run_install("${CMAKE_BUILD_TYPE}" "cmake")
+        endif ()
     endif ()
+
+    get_filename_component(libman_inc "${CMAKE_CURRENT_BINARY_DIR}/libman.cmake" ABSOLUTE)
+    set(__libman_inc "${libman_inc}")
+
     _pmm_log(VERBOSE "Including Conan generated file ${__conan_inc}")
     include("${__conan_inc}" OPTIONAL RESULT_VARIABLE __was_included)
     if (NOT __was_included)
