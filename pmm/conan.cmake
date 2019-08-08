@@ -466,7 +466,7 @@ function(_pmm_conan_run_install _build_type _generator_name )
                 NO_EAT_OUTPUT
                 )
         if (_PMM_RC)
-            message(SEND_ERROR "Conan install failed [${_PMM_RC}]:\n${_PMM_OUTPUT}")
+            message(FATAL_ERROR "Conan install failed [${_PMM_RC}]:\n${_PMM_OUTPUT}")
         else ()
             file(WRITE "${prev_cmd_file}" "${conan_install_cmd}")
         endif ()
