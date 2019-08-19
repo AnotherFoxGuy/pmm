@@ -428,11 +428,15 @@ function(_pmm_conan_run_install _build_type _generator_name )
     # Do the regular install logic
     get_filename_component(conan_timestamp_file "${bin}/conaninfo.txt" ABSOLUTE)
     set_property(DIRECTORY APPEND PROPERTY CMAKE_CONFIGURE_DEPENDS "${conanfile}")
-
-    _pmm_conan_create_profile(${_build_type})
-
     _pmm_set_if_undef(ARG_BUILD missing)
-    set(conan_args --profile "${profile_file}")
+
+    if(ARG_PROFILE)
+        set(conan_args --profile "${ARG_PROFILE}")
+    else()
+        _pmm_conan_create_profile(${_build_type})
+        set(conan_args --profile "${profile_file}")
+    endif()
+
     list(APPEND conan_args --generator ${_generator_name} --build ${ARG_BUILD})
     set(conan_install_cmd
             "${CMAKE_COMMAND}" -E env CONAN_LIBMAN_FOR=cmake
@@ -584,7 +588,7 @@ endfunction()
 function(_pmm_conan)
     _pmm_parse_args(
             . BINCRAFTERS COMMUNITY
-            - BUILD
+            - BUILD PROFILE
             + SETTINGS OPTIONS ENV REMOTES
     )
 
