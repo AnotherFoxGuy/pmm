@@ -11,7 +11,7 @@ jobs:
         displayName: Run CMake
       - script: ninja
         displayName: Run Ninja
-      - script: ctest .
+      - script: ctest . --output-on-failure
         displayName: Run tests
 
   - job: MinGW
@@ -26,7 +26,7 @@ jobs:
         displayName: Run CMake
       - script: ninja
         displayName: Run Ninja
-      - script: ctest .
+      - script: ctest . --output-on-failure
         displayName: Run tests
 
   - job: LinuxDocker
@@ -40,7 +40,7 @@ jobs:
         displayName: Run CMake
       - script: ninja
         displayName: Run Ninja
-      - script: ctest .
+      - script: ctest . --output-on-failure
         displayName: Run Tests
 
   - job: macOS
@@ -53,5 +53,5 @@ jobs:
         displayName: Run CMake
       - script: ninja
         displayName: Run Ninja
-      - script: ctest .
+      - script: ctest . --output-on-failure
         displayName: Run Tests
