@@ -1,8 +1,3 @@
-# Starter pipeline
-# Start with a minimal pipeline that you can customize to build and deploy your code.
-# Add steps that build, run tests, deploy, and more:
-# https://aka.ms/yaml
-
 jobs:
   - job: MSVC
     pool:
@@ -12,7 +7,11 @@ jobs:
         displayName: Install Ninja
       - script: >
           call "C:\\Program Files (x86)\\Microsoft Visual Studio\\2017\\Enterprise\\Common7\\Tools\\vsdevcmd" -arch=x64 &&
-          powershell ./ci.ps1 -ForceMSVC
+          cmake -GNinja -DRUN_DOCKER_TESTS:BOOL=FALSE -DNO_CI_TEST_DIR:BOOL=FALSE .
+        displayName: Run CMake
+      - script: ninja
+        displayName: Run Ninja
+      - script: ctest .
         displayName: Run tests
 
   - job: MinGW
@@ -23,7 +22,11 @@ jobs:
         displayName: Install Ninja
       - script: >
           call "C:\\Program Files (x86)\\Microsoft Visual Studio\\2017\\Enterprise\\Common7\\Tools\\vsdevcmd" -arch=x64 &&
-          powershell ./ci.ps1
+          cmake -GNinja -DRUN_DOCKER_TESTS:BOOL=FALSE -DNO_CI_TEST_DIR:BOOL=FALSE .
+        displayName: Run CMake
+      - script: ninja
+        displayName: Run Ninja
+      - script: ctest .
         displayName: Run tests
 
   - job: LinuxDocker
@@ -31,23 +34,24 @@ jobs:
       vmImage: ubuntu-16.04
 
     steps:
-      - script: |
-          curl -Ls https://github.com/ninja-build/ninja/releases/download/v1.8.2/ninja-linux.zip -o ninja-linux.zip
-          unzip ninja-linux.zip
-          sudo cp -v ninja /usr/local/bin/
-          sudo apt-get install -y python3-venv
+      - script: sudo apt-get install -y python3-venv ninja-build
         displayName: Prepare System
-      - script: pwsh ./ci.ps1 -RunDockerTests -NoCITestDir
-        displayName: Run tests
+      - script: cmake -GNinja -DRUN_DOCKER_TESTS:BOOL=TRUE -DNO_CI_TEST_DIR:BOOL=TRUE .
+        displayName: Run CMake
+      - script: ninja
+        displayName: Run Ninja
+      - script: ctest .
+        displayName: Run Tests
 
   - job: macOS
     pool:
       vmImage: macos-10.13
     steps:
-      - script: |
-          curl -Ls https://github.com/ninja-build/ninja/releases/download/v1.8.2/ninja-mac.zip -o ninja-mac.zip
-          unzip ninja-mac.zip
-          sudo cp -v ninja /usr/local/bin/
+      - script: brew install ninja
         displayName: Prepare System
-      - script: pwsh ./ci.ps1
-        displayName: Run tests
+      - script: cmake -GNinja -DRUN_DOCKER_TESTS:BOOL=FALSE -DNO_CI_TEST_DIR:BOOL=FALSE .
+        displayName: Run CMake
+      - script: ninja
+        displayName: Run Ninja
+      - script: ctest .
+        displayName: Run Tests
