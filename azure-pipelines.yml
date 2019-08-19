@@ -3,6 +3,7 @@ jobs:
     pool:
       vmImage: vs2017-win2016
     steps:
+      - script: mkdir build
       - task: ChocoInstallPackage@1
         inputs:
           packageId: 'ninja'
@@ -23,11 +24,12 @@ jobs:
     pool:
       vmImage: vs2017-win2016
     steps:
+      - script: mkdir build
       - task: ChocoInstallPackage@1
         inputs:
           packageId: 'ninja'
         displayName: Install Ninja
-      - script:  cmake -GNinja -DRUN_DOCKER_TESTS:BOOL=FALSE -DNO_CI_TEST_DIR:BOOL=FALSE ..
+      - script: cmake -GNinja -DRUN_DOCKER_TESTS:BOOL=FALSE -DNO_CI_TEST_DIR:BOOL=FALSE ..
         displayName: Run CMake
         workingDirectory: build
       - script: ninja
@@ -40,8 +42,8 @@ jobs:
   - job: LinuxDocker
     pool:
       vmImage: ubuntu-16.04
-
     steps:
+      - script: mkdir build
       - script: sudo apt-get install -y python3-venv ninja-build
         displayName: Prepare System
       - script: cmake -GNinja -DRUN_DOCKER_TESTS:BOOL=TRUE -DNO_CI_TEST_DIR:BOOL=TRUE ..
@@ -58,6 +60,7 @@ jobs:
     pool:
       vmImage: macos-10.13
     steps:
+      - script: mkdir build
       - script: brew install ninja
         displayName: Prepare System
       - script: cmake -GNinja -DRUN_DOCKER_TESTS:BOOL=FALSE -DNO_CI_TEST_DIR:BOOL=FALSE ..
