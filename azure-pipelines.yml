@@ -4,8 +4,8 @@ jobs:
       vmImage: vs2017-win2016
     steps:
       - task: ChocoInstallPackage@1
-          inputs:
-            packageId: 'ninja'
+        inputs:
+          packageId: 'ninja'
         displayName: Install Ninja
       - script: >
           call "C:\\Program Files (x86)\\Microsoft Visual Studio\\2017\\Enterprise\\Common7\\Tools\\vsdevcmd" -arch=x64 &&
@@ -24,8 +24,8 @@ jobs:
       vmImage: vs2017-win2016
     steps:
       - task: ChocoInstallPackage@1
-          inputs:
-            packageId: 'ninja'
+        inputs:
+          packageId: 'ninja'
         displayName: Install Ninja
       - script:  cmake -GNinja -DRUN_DOCKER_TESTS:BOOL=FALSE -DNO_CI_TEST_DIR:BOOL=FALSE ..
         displayName: Run CMake
