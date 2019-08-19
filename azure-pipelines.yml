@@ -3,11 +3,12 @@ jobs:
     pool:
       vmImage: vs2017-win2016
     steps:
+      - script: mkdir build && cd build
       - script: choco install ninja
         displayName: Install Ninja
       - script: >
           call "C:\\Program Files (x86)\\Microsoft Visual Studio\\2017\\Enterprise\\Common7\\Tools\\vsdevcmd" -arch=x64 &&
-          cmake -GNinja -DRUN_DOCKER_TESTS:BOOL=FALSE -DNO_CI_TEST_DIR:BOOL=FALSE .
+          cmake -GNinja -DRUN_DOCKER_TESTS:BOOL=FALSE -DNO_CI_TEST_DIR:BOOL=FALSE ..
         displayName: Run CMake
       - script: ninja
         displayName: Run Ninja
@@ -18,11 +19,12 @@ jobs:
     pool:
       vmImage: vs2017-win2016
     steps:
+      - script: mkdir build && cd build
       - script: choco install ninja
         displayName: Install Ninja
       - script: >
           call "C:\\Program Files (x86)\\Microsoft Visual Studio\\2017\\Enterprise\\Common7\\Tools\\vsdevcmd" -arch=x64 &&
-          cmake -GNinja -DRUN_DOCKER_TESTS:BOOL=FALSE -DNO_CI_TEST_DIR:BOOL=FALSE .
+          cmake -GNinja -DRUN_DOCKER_TESTS:BOOL=FALSE -DNO_CI_TEST_DIR:BOOL=FALSE ..
         displayName: Run CMake
       - script: ninja
         displayName: Run Ninja
@@ -34,9 +36,10 @@ jobs:
       vmImage: ubuntu-16.04
 
     steps:
+      - script: mkdir build && cd build
       - script: sudo apt-get install -y python3-venv ninja-build
         displayName: Prepare System
-      - script: cmake -GNinja -DRUN_DOCKER_TESTS:BOOL=TRUE -DNO_CI_TEST_DIR:BOOL=TRUE .
+      - script: cmake -GNinja -DRUN_DOCKER_TESTS:BOOL=TRUE -DNO_CI_TEST_DIR:BOOL=TRUE ..
         displayName: Run CMake
       - script: ninja
         displayName: Run Ninja
@@ -47,9 +50,10 @@ jobs:
     pool:
       vmImage: macos-10.13
     steps:
+      - script: mkdir build && cd build
       - script: brew install ninja
         displayName: Prepare System
-      - script: cmake -GNinja -DRUN_DOCKER_TESTS:BOOL=FALSE -DNO_CI_TEST_DIR:BOOL=FALSE .
+      - script: cmake -GNinja -DRUN_DOCKER_TESTS:BOOL=FALSE -DNO_CI_TEST_DIR:BOOL=FALSE ..
         displayName: Run CMake
       - script: ninja
         displayName: Run Ninja
