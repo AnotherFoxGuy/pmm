@@ -8,7 +8,7 @@ jobs:
           packageId: 'ninja'
       - script: >
           call "C:\\Program Files (x86)\\Microsoft Visual Studio\\2017\\Enterprise\\Common7\\Tools\\vsdevcmd" -arch=x64 &&
-          ctest --output-on-failure --build-and-test . build --build-generator Ninja --build-options RUN_DOCKER_TESTS:BOOL=FALSE --build-options NO_CI_TEST_DIR:BOOL=FALSE
+          ctest --output-on-failure --build-and-test . build --build-generator Ninja --build-options RUN_DOCKER_TESTS:BOOL=FALSE --build-options NO_CI_TEST_DIR:BOOL=FALSE .
         displayName: Run CMake
       - script: ninja
         displayName: Run Ninja
@@ -24,7 +24,7 @@ jobs:
           packageId: 'ninja'
       - script: >
           call "C:\\Program Files (x86)\\Microsoft Visual Studio\\2017\\Enterprise\\Common7\\Tools\\vsdevcmd" -arch=x64 &&
-          ctest --output-on-failure --build-and-test . build --build-generator Ninja --build-options RUN_DOCKER_TESTS:BOOL=FALSE --build-options NO_CI_TEST_DIR:BOOL=FALSE
+          ctest --output-on-failure --build-and-test . build --build-generator Ninja --build-options RUN_DOCKER_TESTS:BOOL=FALSE --build-options NO_CI_TEST_DIR:BOOL=FALSE .
         displayName: Run CMake
       - script: ninja
         displayName: Run Ninja
@@ -38,7 +38,7 @@ jobs:
     steps:
       - script: sudo apt-get install -y python3-venv ninja-build
         displayName: Prepare System
-      - script: ctest --output-on-failure --build-and-test . build --build-generator Ninja --build-options RUN_DOCKER_TESTS:BOOL=FALSE --build-options NO_CI_TEST_DIR:BOOL=FALSE
+      - script: ctest --output-on-failure --build-and-test . build --build-generator Ninja --build-options RUN_DOCKER_TESTS:BOOL=FALSE --build-options NO_CI_TEST_DIR:BOOL=FALSE .
         displayName: Run Tests
 
   - job: macOS
@@ -47,5 +47,5 @@ jobs:
     steps:
       - script: brew install ninja
         displayName: Prepare System
-      - script: ctest --output-on-failure --build-and-test . build --build-generator Ninja --build-options RUN_DOCKER_TESTS:BOOL=FALSE --build-options NO_CI_TEST_DIR:BOOL=FALSE
+      - script: ctest --output-on-failure --build-and-test . build --build-generator Ninja --build-options RUN_DOCKER_TESTS:BOOL=FALSE --build-options NO_CI_TEST_DIR:BOOL=FALSE .
         displayName: Run Tests
