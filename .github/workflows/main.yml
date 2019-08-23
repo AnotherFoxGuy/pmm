@@ -1,0 +1,28 @@
+name: CI
+on:
+  push:
+    branches:
+    - master
+  pull_request:
+    branches:
+    - master
+jobs:
+  test:
+    name: Testing ${{ matrix.PMM_tool }} on ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        PMM_tool: ['cmcm', 'conan', 'vcpkg']
+        os: [ubuntu-latest, windows-latest]
+    steps:
+    - uses: actions/checkout@v1
+
+    - uses: actions/setup-python@v1
+
+    - name: CMake
+      working-directory:  tests/${{ matrix.PMM_tool }}
+      run: cmake .
+
+    - name: Build
+      working-directory:  tests/${{ matrix.PMM_tool }}
+      run: cmake --build .
