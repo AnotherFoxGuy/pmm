@@ -111,3 +111,10 @@ function(_pmm_write_if_different filepath content)
     endif ()
     set(_PMM_DID_WRITE "${do_write}" PARENT_SCOPE)
 endfunction()
+
+
+function(_pmm_get_var_from_file filepath varname)
+    include(${filepath})
+    get_property(propt VARIABLE PROPERTY ${varname})
+    set(${varname} ${propt} PARENT_SCOPE)
+endfunction()

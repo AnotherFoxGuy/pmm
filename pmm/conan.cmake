@@ -387,6 +387,11 @@ endfunction()
 
 function(_pmm_conan_create_profile ${_build_type})
     get_filename_component(_profile_file "${PMM_DIR}/_pmm-conan-${_build_type}.profile" ABSOLUTE)
+    if (_pmm_keep_profile)
+        set(profile_changed TRUE PARENT_SCOPE)
+        set(profile_file ${_profile_file} PARENT_SCOPE)
+        return()
+    endif ()
     set(profile_lines "[settings]")
     # Get the settings for the profile
     _pmm_conan_get_settings(settings_lines)
@@ -421,8 +426,7 @@ function(_pmm_conan_create_profile ${_build_type})
 
 endfunction()
 
-function(_pmm_conan_run_install _build_type _generator_name )
-    set(src "${CMAKE_CURRENT_SOURCE_DIR}")
+function(_pmm_conan_run_install _build_type _generator_name)
     set(bin "${CMAKE_CURRENT_BINARY_DIR}")
     # Install the thing
     # Do the regular install logic
@@ -430,17 +434,17 @@ function(_pmm_conan_run_install _build_type _generator_name )
     set_property(DIRECTORY APPEND PROPERTY CMAKE_CONFIGURE_DEPENDS "${conanfile}")
     _pmm_set_if_undef(ARG_BUILD missing)
 
-    if(ARG_PROFILE)
+    if (ARG_PROFILE)
         set(conan_args --profile "${ARG_PROFILE}")
-    else()
+    else ()
         _pmm_conan_create_profile(${_build_type})
         set(conan_args --profile "${profile_file}")
-    endif()
+    endif ()
 
     list(APPEND conan_args --generator ${_generator_name} --build ${ARG_BUILD})
     set(conan_install_cmd
             "${CMAKE_COMMAND}" -E env CONAN_LIBMAN_FOR=cmake
-            "${PMM_CONAN_EXECUTABLE}" install "${src}" ${conan_args}
+            "${PMM_CONAN_EXECUTABLE}" install "${conanfile}" ${conan_args}
             )
     set(prev_cmd_file "${PMM_DIR}/_prev_conan_install_cmd_${_build_type}.txt")
     set(do_install FALSE)
@@ -498,7 +502,7 @@ macro(_pmm_conan_install)
             get_filename_component(__conan_inc "${CMAKE_CURRENT_BINARY_DIR}/conanbuildinfo_multi.cmake" ABSOLUTE)
             _pmm_log(WARNING "Using cmake-multi generator, this generator is experimental")
             _pmm_log(WARNING "If it is broken open an issue here: https://github.com/AnotherFoxGuy/pmm/issues")
-            _pmm_conan_run_install("Debug"   "cmake_multi")
+            _pmm_conan_run_install("Debug" "cmake_multi")
             _pmm_conan_run_install("Release" "cmake_multi")
         else ()
             if (NOT CMAKE_BUILD_TYPE)
@@ -649,15 +653,17 @@ function(_pmm_conan)
             set(conanfile "${cand}")
         endif ()
     endforeach ()
-
-    # Enable the remote repositories that the user may want to use
-    _conan_ensure_remotes("${ARG_REMOTES}")
-
     # Check that there is a Conanfile, or we might be otherwise building in the
     # local cache.
     if (NOT DEFINED conanfile AND NOT (CONAN_EXPORTED AND CONAN_IN_LOCAL_CACHE))
         message(FATAL_ERROR "pf(CONAN) requires a Conanfile in your project source directory")
     endif ()
+
+    _pmm_write_if_different("${PMM_DIR}/_conanfile_loc.txt" "${conanfile}")
+
+    # Enable the remote repositories that the user may want to use
+    _conan_ensure_remotes("${ARG_REMOTES}")
+
     # Go!
     _pmm_conan_install()
     # Lift these env vars so that they are visible after pmm() returns
@@ -671,21 +677,16 @@ endfunction()
 function(_pmm_script_main_conan)
     _pmm_parse_args(
             .
-            /Version
-            /Create
-            /Upload
             /Clean
+            /Create
             /Export
             /Install
-            /Upgrade
             /Uninstall
-            - /Ref /Remote
+            /Upgrade
+            /Upload
+            /Version
+            - /Ref /Remote /Rebuild /BuildType
     )
-
-    if (ARG_/Uninstall)
-        _pmm_conan_uninstall()
-        return()
-    endif ()
 
     if (ARG_/Install)
         set(_PMM_ENSURE_CONAN_NO_INSTALL TRUE)
@@ -701,9 +702,30 @@ function(_pmm_script_main_conan)
         return()
     endif ()
 
+    if (ARG_/Uninstall)
+        _pmm_conan_uninstall()
+        return()
+    endif ()
+
     if (ARG_/Version)
         _pmm_ensure_conan()
         execute_process(COMMAND "${PMM_CONAN_EXECUTABLE}" --version)
+        return()
+    endif ()
+
+    if (ARG_/Rebuild)
+        if (NOT ARG_/BuildType)
+            _message(FATAL_ERROR "Please specify the build type with /BuildType")
+        endif ()
+        _pmm_ensure_conan()
+        set(_pmm_keep_profile TRUE)
+        set(ARG_BUILD ${ARG_/Rebuild})
+        file(STRINGS "${PMM_DIR}/_conanfile_loc.txt" conanfile)
+        if (NOT DEFINED conanfile)
+            message(FATAL_ERROR "pf(CONAN) requires a Conanfile in your project source directory")
+        endif ()
+
+        _pmm_conan_run_install("${ARG_/BuildType}" "cmake")
         return()
     endif ()
 
