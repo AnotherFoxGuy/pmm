@@ -7,11 +7,14 @@ else ()
 endif ()
 
 if (WIN32)
-    set(_PMM_USER_DATA_DIR "$ENV{LocalAppData}/pmm/${PMM_VERSION}")
+    set(_PMM_USER_DATA_DIR        "$ENV{LocalAppData}/pmm/${PMM_VERSION}")
+    set(_PMM_GLOBAL_USER_DATA_DIR "$ENV{LocalAppData}/pmm")
 elseif ("$ENV{XDG_DATA_HOME}")
-    set(_PMM_USER_DATA_DIR "$ENV{XDG_DATA_HOME}/pmm/${PMM_VERSION}")
+    set(_PMM_USER_DATA_DIR        "$ENV{XDG_DATA_HOME}/pmm/${PMM_VERSION}")
+    set(_PMM_GLOBAL_USER_DATA_DIR "$ENV{XDG_DATA_HOME}/pmm")
 else ()
-    set(_PMM_USER_DATA_DIR "${_PMM_USER_HOME}/.local/share/pmm/${PMM_VERSION}")
+    set(_PMM_USER_DATA_DIR        "${_PMM_USER_HOME}/.local/share/pmm/${PMM_VERSION}")
+    set(_PMM_GLOBAL_USER_DATA_DIR "${_PMM_USER_HOME}/.local/share/pmm")
 endif ()
 
 # The main function.
