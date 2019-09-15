@@ -21,6 +21,8 @@ function(_pmm_project_fn)
             + CONAN VCPKG CMakeCM
     )
 
+    _pmm_generate_cli_scripts(FALSE)
+
     if (ARG_DEBUG)
         set(PMM_DEBUG TRUE)
     endif ()
@@ -53,14 +55,22 @@ endmacro()
 function(_pmm_script_main)
     _pmm_parse_script_args(
             -nocheck
-            . /Conan /Help
+            . /Conan /Help /GenerateShellScript
     )
+    if (ARG_/GenerateShellScript)
+        _pmm_generate_cli_scripts(TRUE)
+        _pmm_log("Generated pmm-cli.sh and pmm-cli.bat")
+        return()
+    endif ()
     if (ARG_/Help)
         message([===[
 Available options:
 
 /Help
     Display this help message
+
+/GenerateShellScript
+    (Re)generate a pmm-cli.sh and pmm-cli.bat script for calling PMM helper commands
 
 /Conan
     Perform a Conan action
@@ -78,7 +88,7 @@ Available options:
 
     /Clean
         Run `conan remove * -fsb`.
-        
+
         Removes temporary source and build folders in the local conan cache.
 
     /Version
