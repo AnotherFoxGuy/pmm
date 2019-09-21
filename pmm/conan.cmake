@@ -427,10 +427,9 @@ function(_pmm_conan_create_profile ${_build_type})
 endfunction()
 
 function(_pmm_conan_run_install _build_type _generator_name)
-    set(bin "${CMAKE_CURRENT_BINARY_DIR}")
     # Install the thing
     # Do the regular install logic
-    get_filename_component(conan_timestamp_file "${bin}/conaninfo.txt" ABSOLUTE)
+    set(prev_cmd_file "${PMM_DIR}/_prev_conan_install_cmd_${_build_type}.txt")
     set_property(DIRECTORY APPEND PROPERTY CMAKE_CONFIGURE_DEPENDS "${conanfile}")
     _pmm_set_if_undef(ARG_BUILD missing)
 
@@ -442,13 +441,9 @@ function(_pmm_conan_run_install _build_type _generator_name)
     endif ()
 
     list(APPEND conan_args --generator ${_generator_name} --build ${ARG_BUILD})
-    set(conan_install_cmd
-            "${CMAKE_COMMAND}" -E env CONAN_LIBMAN_FOR=cmake
-            "${PMM_CONAN_EXECUTABLE}" install "${conanfile}" ${conan_args}
-            )
-    set(prev_cmd_file "${PMM_DIR}/_prev_conan_install_cmd_${_build_type}.txt")
+    set(conan_install_cmd "${PMM_CONAN_EXECUTABLE}" install "${conanfile}" ${conan_args})
     set(do_install FALSE)
-    if (EXISTS "${conan_timestamp_file}" AND "${conanfile}" IS_NEWER_THAN "${conan_timestamp_file}")
+    if (EXISTS "${prev_cmd_file}" AND "${conanfile}" IS_NEWER_THAN "${prev_cmd_file}")
         _pmm_log(DEBUG "Need to run conan install: ${conanfile} is newer than the last install run")
         set(do_install TRUE)
     endif ()
@@ -469,10 +464,7 @@ function(_pmm_conan_run_install _build_type _generator_name)
         _pmm_log(VERBOSE "Conan installation is up-to-date. Not running Conan.")
     else ()
         _pmm_log("Installing Conan requirements from ${conanfile}")
-        _pmm_exec(${conan_install_cmd}
-                WORKING_DIRECTORY "${bin}"
-                NO_EAT_OUTPUT
-                )
+        _pmm_exec(${conan_install_cmd} WORKING_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}" NO_EAT_OUTPUT)
         if (_PMM_RC)
             message(FATAL_ERROR "Conan install failed [${_PMM_RC}]:\n${_PMM_OUTPUT}")
         else ()
@@ -514,9 +506,6 @@ macro(_pmm_conan_install)
         endif ()
     endif ()
 
-    get_filename_component(libman_inc "${CMAKE_CURRENT_BINARY_DIR}/libman.cmake" ABSOLUTE)
-    set(__libman_inc "${libman_inc}")
-
     _pmm_log(VERBOSE "Including Conan generated file ${__conan_inc}")
     include("${__conan_inc}" OPTIONAL RESULT_VARIABLE __was_included)
     if (NOT __was_included)
@@ -528,11 +517,7 @@ macro(_pmm_conan_install)
     else ()
         _pmm_conan_do_setup()
     endif ()
-    set(_prev_index "${LIBMAN_INDEX}")
-    include("${__libman_inc}" OPTIONAL)
-    if (LIBMAN_INDEX AND NOT _prev_index)
-        _pmm_log("Libman import_packages() is available")
-    endif ()
+
     unset(__conan_inc)
     unset(__was_included)
 endmacro()
