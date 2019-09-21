@@ -135,3 +135,7 @@ function(_pmm_generate_cli_scripts force)
         file(WRITE "${CMAKE_BINARY_DIR}/pmm-cli.bat" "@echo off\n\"${CMAKE_COMMAND}\" -P \"${PMM_MODULE}\" %*")
     endif ()
 endfunction()
+
+macro(message_hr)
+    message("══════════════════════════════════════════════════════════════════════════════════")
+endmacro()

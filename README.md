@@ -228,5 +228,5 @@ Get help with the `/Help` option:
 As an example, you can rebuild a Conan package with this command:
 
 ```sh
-> pmm-cli.sh /Conan /Rebuild <package name>  /BuildType <Release or Debug>
+> pmm-cli.sh /Conan /Rebuild <package name>
 ```

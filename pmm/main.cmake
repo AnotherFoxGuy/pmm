@@ -83,12 +83,13 @@ Available options:
         Remove the Conan installation that PMM may have created
         (necessary for Conan upgrades)
 
-    /Rebuild <package name>  /BuildType <Release or Debug>
+    /Rebuild <package name>
         Force rebuilds a package by name
 
-    /Clean
-        Run `conan remove * -fsb`.
+    /UpdatePackages
+        Check for updates for Conan packages
 
+    /Clean
         Removes temporary source and build folders in the local conan cache.
 
     /Version

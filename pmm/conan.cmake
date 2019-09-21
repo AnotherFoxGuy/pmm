@@ -460,6 +460,7 @@ function(_pmm_conan_run_install _build_type _generator_name)
             set(do_install TRUE)
         endif ()
     endif ()
+
     if (NOT do_install)
         _pmm_log(VERBOSE "Conan installation is up-to-date. Not running Conan.")
     else ()
@@ -644,8 +645,6 @@ function(_pmm_conan)
         message(FATAL_ERROR "pf(CONAN) requires a Conanfile in your project source directory")
     endif ()
 
-    _pmm_write_if_different("${PMM_DIR}/_conanfile_loc.txt" "${conanfile}")
-
     # Enable the remote repositories that the user may want to use
     _conan_ensure_remotes("${ARG_REMOTES}")
 
@@ -667,11 +666,14 @@ function(_pmm_script_main_conan)
             /Export
             /Install
             /Uninstall
+            /UpdatePackages
             /Upgrade
             /Upload
             /Version
-            - /Ref /Remote /Rebuild /BuildType
+            - /Ref /Remote /Rebuild
     )
+
+    set(CONAN_CLI_MODE TRUE)
 
     if (ARG_/Install)
         set(_PMM_ENSURE_CONAN_NO_INSTALL TRUE)
@@ -698,20 +700,29 @@ function(_pmm_script_main_conan)
         return()
     endif ()
 
-    if (ARG_/Rebuild)
-        if (NOT ARG_/BuildType)
-            _message(FATAL_ERROR "Please specify the build type with /BuildType")
-        endif ()
-        _pmm_ensure_conan()
-        set(_pmm_keep_profile TRUE)
-        set(ARG_BUILD ${ARG_/Rebuild})
-        file(STRINGS "${PMM_DIR}/_conanfile_loc.txt" conanfile)
-        if (NOT DEFINED conanfile)
-            message(FATAL_ERROR "pf(CONAN) requires a Conanfile in your project source directory")
+    if (ARG_/Rebuild OR ARG_/UpdatePackages)
+        file(GLOB prev_cmds "${PMM_DIR}/_prev_conan_install_cmd_*.txt")
+        if (NOT prev_cmds)
+            message(FATAL_ERROR "PMM hasn't been run before")
+            return()
         endif ()
 
-        _pmm_conan_run_install("${ARG_/BuildType}" "cmake")
-        return()
+        foreach (cmd_file ${prev_cmds})
+            string(REGEX MATCHALL "cmd_(.+)\\.txt" _ ${cmd_file})
+            file(READ ${cmd_file} cmd)
+            if (ARG_/Rebuild)
+                string(REPLACE "missing" "${ARG_/Rebuild}" cmd "${cmd}")
+            elseif (ARG_/UpdatePackages)
+                list(APPEND cmd --update)
+            endif ()
+            message_hr()
+            message("Rebuilding ${CMAKE_MATCH_1}")
+            message_hr()
+            _pmm_exec(${cmd} WORKING_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}" NO_EAT_OUTPUT)
+            if (_PMM_RC)
+                message(FATAL_ERROR "Conan install failed [${_PMM_RC}]:\n${_PMM_OUTPUT}")
+            endif ()
+        endforeach ()
     endif ()
 
     if (ARG_/Create AND ARG_/Export)
@@ -748,6 +759,7 @@ function(_pmm_script_main_conan)
     if (ARG_/Clean)
         _pmm_ensure_conan()
         execute_process(COMMAND "${PMM_CONAN_EXECUTABLE}" remove * -fsb)
+        return()
     endif ()
 
     if (ARG_/Upload)
