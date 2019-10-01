@@ -12,7 +12,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        PMM_tool: ['cmcm', 'conan', 'vcpkg']
+        PMM_tool: ['cmcm', 'conan', 'vcpkg', 'pmm-cli']
         os: [ubuntu-latest, windows-latest]
     steps:
     - uses: actions/checkout@v1
