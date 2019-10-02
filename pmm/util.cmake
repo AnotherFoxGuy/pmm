@@ -35,22 +35,26 @@ endfunction()
 #   inhibits macro argument substitution. It is painful, but it makes this magic
 #   work.
 macro(_pmm_parse_args)
-    cmake_parse_arguments(_ "-nocheck" "" ".;-;+" "${ARGV}")
-    _pmm_parse_arglist("${${}ARGV}" "${__.}" "${__-}" "${__+}")
+    cmake_parse_arguments(_ "-nocheck;-hardcheck" "" ".;-;+" "${ARGV}")
+    set(__arglist "${${}ARGV}")
+    _pmm_parse_arglist("${__.}" "${__-}" "${__+}")
 endmacro()
 
 macro(_pmm_parse_script_args)
-    cmake_parse_arguments(_ "-nocheck" "" ".;-;+" "${ARGV}")
-    _pmm_read_script_argv(__script_argv)
-    _pmm_parse_arglist("${__script_argv}" "${__.}" "${__-}" "${__+}")
+    cmake_parse_arguments(_ "-nocheck;-hardcheck" "" ".;-;+" "${ARGV}")
+    _pmm_read_script_argv(__arglist)
+    _pmm_parse_arglist("${__.}" "${__-}" "${__+}")
 endmacro()
 
-macro(_pmm_parse_arglist argv opt args list_args)
-    cmake_parse_arguments(ARG "${opt}" "${args}" "${list_args}" "${argv}")
+macro(_pmm_parse_arglist opt args list_args)
+    cmake_parse_arguments(ARG "${opt}" "${args}" "${list_args}" "${__arglist}")
     if (NOT __-nocheck)
         foreach (arg IN LISTS ARG_UNPARSED_ARGUMENTS)
             message(WARNING "Unknown argument: ${arg}")
         endforeach ()
+        if (__-hardcheck AND NOT ("${ARG_UNPARSED_ARGUMENTS}" STREQUAL ""))
+            message(FATAL_ERROR "Unknown arguments provided.")
+        endif ()
     endif ()
 endmacro()
 
@@ -126,9 +130,9 @@ function(_pmm_generate_cli_scripts force)
         file(WRITE "${_PMM_USER_DATA_DIR}/pmm-cli.sh" "#!/bin/sh\n${CMAKE_COMMAND} -P ${PMM_MODULE} \"$@\"")
         # Fix to make the sh executable
         file(COPY "${_PMM_USER_DATA_DIR}/pmm-cli.sh"
-             DESTINATION ${CMAKE_BINARY_DIR}
-             FILE_PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE GROUP_READ GROUP_EXECUTE WORLD_READ WORLD_EXECUTE
-        )
+                DESTINATION ${CMAKE_BINARY_DIR}
+                FILE_PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE GROUP_READ GROUP_EXECUTE WORLD_READ WORLD_EXECUTE
+                )
     endif ()
     # The bat scipt
     if (NOT EXISTS "${CMAKE_BINARY_DIR}/pmm-cli.bat" OR ${force})
