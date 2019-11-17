@@ -62,8 +62,23 @@ function(_pmm_script_main)
         _pmm_log("Generated pmm-cli.sh and pmm-cli.bat")
         return()
     endif ()
+
     if (ARG_/Help)
-        message([===[
+        show_cli_help()
+        return()
+    endif ()
+
+    if (ARG_/Conan)
+        _pmm_script_main_conan(${ARG_UNPARSED_ARGUMENTS})
+    else ()
+        message(ERROR "PMM did not recognise the given argument list")
+        show_cli_help()
+    endif ()
+endfunction()
+
+
+function(show_cli_help)
+    message([===[
 Available options:
 
 /Help
@@ -111,12 +126,4 @@ Available options:
         `<ref>` may be a partial `user/channel` reference. In this case the full
         ref will be obtained using the project in the current directory.
 ]===])
-        return()
-    endif ()
-
-    if (ARG_/Conan)
-        _pmm_script_main_conan(${ARG_UNPARSED_ARGUMENTS})
-    else ()
-        message(FATAL_ERROR "PMM did not recognise the given argument list")
-    endif ()
 endfunction()
