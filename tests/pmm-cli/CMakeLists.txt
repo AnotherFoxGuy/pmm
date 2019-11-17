@@ -24,6 +24,14 @@ add_custom_target(
         VERBATIM COMMENT "Testing help command"
 )
 
+
+add_custom_target(
+        pmm_help_no_arg
+        ALL
+        COMMAND ${PMM_CLI_COMMAND}
+        VERBATIM COMMENT "Run without command"
+)
+
 add_custom_target(
         conan_install
         ALL
