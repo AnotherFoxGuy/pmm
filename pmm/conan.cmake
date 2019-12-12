@@ -532,6 +532,8 @@ macro(_pmm_conan_install)
         _pmm_conan_do_setup()
     endif ()
 
+    _pmm_generate_conan_cli_scripts()
+
     unset(__conan_inc)
     unset(__was_included)
 endmacro()
@@ -587,6 +589,22 @@ function(_conan_ensure_remotes remotes)
             endif ()
         endif ()
     endwhile ()
+endfunction()
+
+function(_pmm_generate_conan_cli_scripts)
+    # The sh scipt
+    if (NOT EXISTS "${CMAKE_BINARY_DIR}/conan.sh")
+        file(WRITE "${_PMM_USER_DATA_DIR}/conan.sh" "#!/bin/sh\n\"${PMM_CONAN_EXECUTABLE}\" \"$@\"")
+        # Fix to make the sh executable
+        file(COPY "${_PMM_USER_DATA_DIR}/conan.sh"
+                DESTINATION ${CMAKE_BINARY_DIR}
+                FILE_PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE GROUP_READ GROUP_EXECUTE WORLD_READ WORLD_EXECUTE
+                )
+    endif ()
+    # The bat scipt
+    if (NOT EXISTS "${CMAKE_BINARY_DIR}/conan.bat")
+        file(WRITE "${CMAKE_BINARY_DIR}/conan.bat" "@echo off\n\"${PMM_CONAN_EXECUTABLE}\" %*")
+    endif ()
 endfunction()
 
 # Implement the `CONAN` subcommand
