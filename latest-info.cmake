@@ -7,7 +7,7 @@ function(_pmm_changes version)
     endif ()
 endfunction()
 
-set(PMM_LATEST_VERSION 1.7.2)
+set(PMM_LATEST_VERSION 1.8.0)
 
 if (PMM_VERSION VERSION_LESS PMM_LATEST_VERSION AND NOT PMM_IGNORE_NEW_VERSION)
     message(STATUS "[pmm] You are using PMM version ${PMM_VERSION}. The latest is ${PMM_LATEST_VERSION}.")
@@ -105,6 +105,9 @@ if (PMM_VERSION VERSION_LESS PMM_LATEST_VERSION AND NOT PMM_IGNORE_NEW_VERSION)
             )
     _pmm_changes(1.7.2
             "Added support for conan V1.20"
+            )
+    _pmm_changes(1.8.0
+            "Added support for conan V1.21"
             )
     message(STATUS "[pmm] To update, simply change the value of PMM_VERSION_INIT in pmm.cmake")
     message(STATUS "[pmm] You can disable these messages by setting PMM_IGNORE_NEW_VERSION to TRUE before including pmm.cmake")
