@@ -109,6 +109,7 @@ if (PMM_VERSION VERSION_LESS PMM_LATEST_VERSION AND NOT PMM_IGNORE_NEW_VERSION)
     _pmm_changes(1.8.0
             "Added support for conan V1.21"
             "Added Conan utility scripts"
+            "Added vcpkg utility scripts"
             )
     message(STATUS "[pmm] To update, simply change the value of PMM_VERSION_INIT in pmm.cmake")
     message(STATUS "[pmm] You can disable these messages by setting PMM_IGNORE_NEW_VERSION to TRUE before including pmm.cmake")
