@@ -1,8 +1,12 @@
-#include <iostream>
-using namespace std;
+// cotire example project main
+
+#include <string>
+
+#include "example.h"
+#include "log.h"
 
 int main()
 {
-    cout << "Hello, World!";
-    return 0;
+	std::string msg = example::get_message();
+	logging::info(msg);
 }

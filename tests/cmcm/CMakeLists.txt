@@ -11,6 +11,6 @@ pmm(CMakeCM ROLLING)
 
 include(cotire)
 
-add_executable(dummy-program main.cpp)
+add_executable(dummy-program main.cpp example.cpp log.cpp log.h example.h)
 
 cotire(dummy-program)
