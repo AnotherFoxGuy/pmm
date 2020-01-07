@@ -31,8 +31,7 @@ Never fear! PMM is the lowest-maintenance software you will ever use.
 
 Using PMM is simple:
 
-1. Download the `pmm.cmake` file (available at the top level of this
-   respository), and place it at the top level of your repository
+1. Download the [`pmm.cmake` file](https://anotherfoxguy.com/pmm/pmm.cmake), and place it at the top level of your repository
    (alongside your `CMakeLists.txt`).
 2. In your `CMakeLists.txt`, add a line `include(pmm.cmake)`.
 3. Call the `pmm()` CMake function.
