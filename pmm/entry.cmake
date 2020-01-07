@@ -56,7 +56,7 @@ function(_pmm_download url dest)
     file(LOCK "${dest}.lock" RELEASE)
 endfunction()
 
-foreach (fname IN ITEMS util.cmake python.cmake conan.cmake vcpkg.cmake cmcm.cmake main.cmake)
+foreach (fname IN ITEMS util.cmake python.cmake conan.cmake vcpkg.cmake cmcm.cmake main.cmake dds.cmake)
     get_filename_component(_dest "${PMM_DIR}/${fname}" ABSOLUTE)
     if (NOT EXISTS "${_dest}" OR PMM_ALWAYS_DOWNLOAD)
         _pmm_download("${PMM_URL}/${fname}" "${_dest}")
