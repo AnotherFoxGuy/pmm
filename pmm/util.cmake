@@ -78,6 +78,14 @@ function(_pmm_exec)
         _pmm_log(DEBUG "Executing command: ${acc}")
     endif ()
     set(output_args)
+    list(FIND ARGN WORKING_DIRECTORY wd_kw_idx)
+    set(wd_arg)
+    if(wd_kw_idx GREATER -1)
+        math(EXPR wd_idx "${wd_kw_idx} + 1")
+        list(GET ARGN "${wd_idx}" wd_dir)
+        LIST(REMOVE_AT ARGN "${wd_idx}" "${wd_kw_idx}")
+        set(wd_arg WORKING_DIRECTORY "${wd_dir}")
+    endif()
     if (NOT NO_EAT_OUTPUT IN_LIST ARGN)
         set(output_args
                 OUTPUT_VARIABLE out
@@ -89,6 +97,7 @@ function(_pmm_exec)
             COMMAND ${ARGN}
             ${output_args}
             RESULT_VARIABLE rc
+            ${wd_arg}
     )
     set(_PMM_RC "${rc}" PARENT_SCOPE)
     set(_PMM_OUTPUT "${out}" PARENT_SCOPE)
