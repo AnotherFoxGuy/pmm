@@ -1,4 +1,4 @@
-set(PMM_CONAN_MIN_VERSION 1.19.0 CACHE INTERNAL "Minimum Conan version we support")
+set(PMM_CONAN_MIN_VERSION 1.21.0 CACHE INTERNAL "Minimum Conan version we support")
 set(PMM_CONAN_MAX_VERSION 1.21.99 CACHE INTERNAL "Maximum Conan version we support")
 
 
@@ -340,8 +340,12 @@ function(_pmm_conan_get_settings out)
         if (NOT comp_version MATCHES "${majmin_ver_re}")
             message(FATAL_ERROR "Unable to parse compiler version string: ${comp_version}")
         endif ()
-        _pmm_log(DEBUG "Using compiler.version=${CMAKE_MATCH_1}")
-        list(APPEND ret "compiler.version=${CMAKE_MATCH_1}")
+        set(use_version "${CMAKE_MATCH_1}")
+         if (use_version VERSION_GREATER_EQUAL 8.0)
+            string(REGEX REPLACE "^([0-9]+)\\..*" "\\1" use_version "${use_version}")
+        endif ()
+        _pmm_log(DEBUG "Using compiler.version=${use_version}")
+        list(APPEND ret "compiler.version=${use_version}")
         # TODO: Support libc++ with regular Clang. Plz.
         if (lang STREQUAL "CXX")
             _pmm_log(DEBUG "Using compiler.libcxx=libstdc++")
