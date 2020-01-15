@@ -1,6 +1,7 @@
 set(PMM_CONAN_MIN_VERSION 1.21.0 CACHE INTERNAL "Minimum Conan version we support")
 set(PMM_CONAN_MAX_VERSION 1.21.99 CACHE INTERNAL "Maximum Conan version we support")
 
+option(PMM_CMAKE_MULTI "Use the cmake_multi generator for Conan" ON)
 
 # Get Conan in a new virtualenv using the Python interpreter specified by the
 # package of the `python_pkg` arg (Python3 or Python2)
@@ -508,7 +509,7 @@ macro(_pmm_conan_install)
         _pmm_log("We are being built by Conan, so we won't run the install step.")
         _pmm_log("Assuming ${__conan_inc} is present.")
     else ()
-        if (CMAKE_CONFIGURATION_TYPES AND NOT CMAKE_BUILD_TYPE AND NOT ARGUMENTS_BUILD_TYPE)
+        if (CMAKE_CONFIGURATION_TYPES AND NOT CMAKE_BUILD_TYPE AND NOT ARGUMENTS_BUILD_TYPE AND PMM_CMAKE_MULTI)
             get_filename_component(__conan_inc "${CMAKE_CURRENT_BINARY_DIR}/conanbuildinfo_multi.cmake" ABSOLUTE)
             _pmm_log(WARNING "Using cmake-multi generator, this generator is experimental")
             _pmm_log(WARNING "If it is broken open an issue here: https://github.com/AnotherFoxGuy/pmm/issues")
