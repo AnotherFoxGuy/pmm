@@ -1,3 +1,8 @@
+##
+## PMM - The Package Manager Manager
+## https://github.com/AnotherFoxGuy/pmm
+##
+
 ## MIT License
 ##
 ## Copyright (c) 2018 vector-of-bool
@@ -22,7 +27,7 @@
 ## SOFTWARE.
 
 # Bump this version to change what PMM version is downloaded
-set(PMM_VERSION_INIT 1.8.1)
+set(PMM_VERSION_INIT 1.9.0)
 
 # Helpful macro to set a variable if it isn't already set
 macro(_pmm_set_if_undef varname)
@@ -35,7 +40,7 @@ endmacro()
 # The version:
 _pmm_set_if_undef(PMM_VERSION ${PMM_VERSION_INIT})
 # The base URL we download PMM from:
-_pmm_set_if_undef(PMM_URL_BASE "http://anotherfoxguy.com/pmm/")
+_pmm_set_if_undef(PMM_URL_BASE "https://anotherfoxguy.com/pmm/")
 # The real URL we download from (Based on the version)
 _pmm_set_if_undef(PMM_URL "${PMM_URL_BASE}/${PMM_VERSION}")
 # The directory where we store our downloaded files

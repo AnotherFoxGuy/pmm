@@ -7,7 +7,7 @@ function(_pmm_changes version)
     endif ()
 endfunction()
 
-set(PMM_LATEST_VERSION 1.8.1)
+set(PMM_LATEST_VERSION 1.9.0)
 
 if (PMM_VERSION VERSION_LESS PMM_LATEST_VERSION AND NOT PMM_IGNORE_NEW_VERSION)
     message(STATUS "[pmm] You are using PMM version ${PMM_VERSION}. The latest is ${PMM_LATEST_VERSION}.")
@@ -113,6 +113,13 @@ if (PMM_VERSION VERSION_LESS PMM_LATEST_VERSION AND NOT PMM_IGNORE_NEW_VERSION)
             )
     _pmm_changes(1.8.1
             "Fixed PMM failing to download files in clion"
+            )
+    _pmm_changes(1.9.0
+            "Added DDS support"
+            "Download only used modules"
+            "Improved update check"
+            "Fixed issue with clang version detection"
+            "Added option to turn cmake_multi on/off"
             )
     message(STATUS "[pmm] To update, simply change the value of PMM_VERSION_INIT in pmm.cmake")
     message(STATUS "[pmm] You can disable these messages by setting PMM_IGNORE_NEW_VERSION to TRUE before including pmm.cmake")
