@@ -118,6 +118,10 @@ _pmm_changes(1.9.0
         "Fixed issue with clang version detection"
         "Added option to turn cmake_multi on/off"
         )
+_pmm_changes(1.9.1
+        "Added support for conan V1.22"
+        "Use FindPython module as fallback for installing Conan"
+        )
 message(STATUS "[pmm] To update, simply change the value of PMM_VERSION_INIT in pmm.cmake")
 message(STATUS "[pmm] You can disable these messages by setting PMM_IGNORE_NEW_VERSION to TRUE before including pmm.cmake")
 
