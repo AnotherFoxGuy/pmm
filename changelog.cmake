@@ -122,6 +122,10 @@ _pmm_changes(1.9.1
         "Added support for conan V1.22"
         "Use FindPython module as fallback for installing Conan"
         )
+_pmm_changes(1.9.2
+        "Added support for conan V1.23"
+        "Updated DDS to version 0.1.0-alpha.3"
+        )
 message(STATUS "[pmm] To update, simply change the value of PMM_VERSION_INIT in pmm.cmake")
 message(STATUS "[pmm] You can disable these messages by setting PMM_IGNORE_NEW_VERSION to TRUE before including pmm.cmake")
 
