@@ -8,7 +8,7 @@ set(PMM_DEBUG TRUE)
 include(../../pmm.cmake)
 
 pmm(VCPKG
-    REVISION 2019.07
+    REVISION 2020.01
     REQUIRES catch2
     DEBUG
     )
