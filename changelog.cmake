@@ -127,6 +127,9 @@ _pmm_changes(1.9.2
         "Updated DDS to version 0.1.0-alpha.3"
         "Updated suggested vcpkg version to 2020.01"
         )
+_pmm_changes(1.9.3
+        "Added support for conan V1.24"
+        )
 message(STATUS "[pmm] To update, simply change the value of PMM_VERSION_INIT in pmm.cmake")
 message(STATUS "[pmm] You can disable these messages by setting PMM_IGNORE_NEW_VERSION to TRUE before including pmm.cmake")
 
