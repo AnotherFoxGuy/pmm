@@ -1,5 +1,5 @@
 set(PMM_CONAN_MIN_VERSION 1.21.0 CACHE INTERNAL "Minimum Conan version we support")
-set(PMM_CONAN_MAX_VERSION 1.24.99 CACHE INTERNAL "Maximum Conan version we support")
+set(PMM_CONAN_MAX_VERSION 1.25.99 CACHE INTERNAL "Maximum Conan version we support")
 
 option(PMM_CMAKE_MULTI "Use the cmake_multi generator for Conan" ON)
 
