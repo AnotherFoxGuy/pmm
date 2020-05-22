@@ -80,8 +80,6 @@ function(_pmm_ensure_vcpkg dir rev)
     file(REMOVE_RECURSE "${dir}")
     file(RENAME "${vcpkg_root}" "${dir}")
     _pmm_log("vcpkg successfully bootstrapped to ${dir}")
-    # Fix for "Could not detect vcpkg-root."
-    execute_process(COMMAND ${CMAKE_COMMAND} -E sleep 1)
 endfunction()
 
 function(_pmm_vcpkg_default_triplet out)
