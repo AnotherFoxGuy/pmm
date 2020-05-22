@@ -80,6 +80,8 @@ function(_pmm_ensure_vcpkg dir rev)
     file(REMOVE_RECURSE "${dir}")
     file(RENAME "${vcpkg_root}" "${dir}")
     _pmm_log("vcpkg successfully bootstrapped to ${dir}")
+    # Fix for "Could not detect vcpkg-root."
+    execute_process(COMMAND ${CMAKE_COMMAND} -E sleep 1)
 endfunction()
 
 function(_pmm_vcpkg_default_triplet out)
@@ -200,13 +202,7 @@ function(_pmm_vcpkg)
     )
 
     if (NOT DEFINED ARG_REVISION)
-        # This is just a random revision people can plop down in for the REVISION
-        # argument. There isn't anything significant about this particular
-        # revision, other than being the revision of the `master` branch at the
-        # time I typed this comment. If you are modifying PMM, feel free to
-        # change this revision number to whatever is the latest in the vcpkg
-        # repository. (https://github.com/Microsoft/vcpkg)
-        message(FATAL_ERROR "Using pmm(VCPKG) requires a REVISION argument. Try `REVISION 2020.01`")
+        message(FATAL_ERROR "Using pmm(VCPKG) requires a REVISION argument. Try `REVISION 2020.04`")
     endif ()
     if (NOT DEFINED ARG_TRIPLET)
         _pmm_vcpkg_default_triplet(ARG_TRIPLET)
@@ -226,6 +222,7 @@ function(_pmm_vcpkg)
         _pmm_generate_vcpkg_cli_scripts()
         _pmm_log("Installing requirements with vcpkg")
         set(cmd ${CMAKE_COMMAND} -E env
+                VCPKG_ROOT=${vcpkg_inst_dir}
                 CC=${CMAKE_C_COMPILER}
                 CXX=${CMAKE_CXX_COMPILER}
                 "${PMM_VCPKG_EXECUTABLE}" install
