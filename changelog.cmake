@@ -133,7 +133,10 @@ _pmm_changes(1.9.3
 _pmm_changes(1.9.4
         "Added support for conan V1.25"
         "Fixed vcpkg-root error \n\n NOTE: Due to a bug in vcpkg, the vcpkg module requires commit '46bf8c52cb343b6557a48b5b80aad56cdeedd4d8' or newer! \n\n"
-        )        
+        )     
+_pmm_changes(1.9.5
+        "Added support for conan V1.26"
+        )   
 message(STATUS "[pmm] To update, simply change the value of PMM_VERSION_INIT in pmm.cmake")
 message(STATUS "[pmm] You can disable these messages by setting PMM_IGNORE_NEW_VERSION to TRUE before including pmm.cmake")
 
