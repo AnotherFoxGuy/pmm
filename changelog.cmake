@@ -137,6 +137,9 @@ _pmm_changes(1.9.4
 _pmm_changes(1.9.5
         "Added support for conan V1.26"
         )   
+_pmm_changes(1.9.6
+        "Added support for conan V1.31"
+        )   
 message(STATUS "[pmm] To update, simply change the value of PMM_VERSION_INIT in pmm.cmake")
 message(STATUS "[pmm] You can disable these messages by setting PMM_IGNORE_NEW_VERSION to TRUE before including pmm.cmake")
 
