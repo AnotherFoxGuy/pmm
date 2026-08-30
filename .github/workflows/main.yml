@@ -21,8 +21,8 @@ jobs:
 
     - name: CMake
       working-directory:  tests/${{ matrix.PMM_tool }}
-      run: cmake .
+      run: cmake -DCMAKE_BUILD_TYPE=Release .
 
     - name: Build
       working-directory:  tests/${{ matrix.PMM_tool }}
-      run: cmake --build .
+      run: cmake --build . --config Release
