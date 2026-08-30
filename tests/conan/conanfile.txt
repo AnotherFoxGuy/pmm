@@ -1,2 +1,2 @@
 [requires]
-Catch2/2.9.2@catchorg/stable
+catch2/3.15.3
