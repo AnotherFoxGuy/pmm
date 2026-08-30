@@ -15,5 +15,5 @@ pmm(VCPKG
 
 find_package(Catch2 CONFIG REQUIRED)
 
-add_executable(dummy main.cpp)
-target_link_libraries(dummy PRIVATE Catch2::Catch2 Catch2::Catch2WithMain)
+add_executable(test_exe main.cpp)
+target_link_libraries(test_exe PRIVATE Catch2::Catch2 Catch2::Catch2WithMain)

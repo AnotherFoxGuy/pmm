@@ -11,7 +11,7 @@ pmm(CONAN DEBUG)
 
 find_package(Catch2 REQUIRED CONFIG)
 
-add_executable(dummy main.cpp)
-target_link_libraries(dummy PRIVATE Catch2::Catch2WithMain)
+add_executable(test_exe main.cpp)
+target_link_libraries(test_exe PRIVATE Catch2::Catch2WithMain)
 
-add_test(dummy dummy)
+add_test(test_exe test_exe)

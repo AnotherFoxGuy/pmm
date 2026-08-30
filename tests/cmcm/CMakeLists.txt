@@ -13,5 +13,5 @@ include(CMakeRC)
 
 cmrc_add_resource_library(test ALIAS test::rc test.txt)
 
-add_executable(test-program main.cpp)
-target_link_libraries(test-program PRIVATE test::rc)
+add_executable(test_exe main.cpp)
+target_link_libraries(test_exe PRIVATE test::rc)

@@ -543,6 +543,8 @@ macro(_pmm_conan_install)
                 "You may need to run Conan manually (from the build directory). "
                 "Ensure you are using the 'cmake' generator."
                 )
+    else ()
+        set(CMAKE_PREFIX_PATH ${CMAKE_PREFIX_PATH} "${PMM_DIR}/conan/" CACHE INTERNAL "")
     endif ()
 
     _pmm_generate_conan_cli_scripts()
