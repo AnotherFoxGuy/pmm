@@ -1,12 +1,14 @@
 // cotire example project main
 
+#include <iostream>
 #include <string>
+#include <cmrc/cmrc.hpp>
 
-#include "example.h"
-#include "log.h"
+CMRC_DECLARE(test);
 
 int main()
 {
-	std::string msg = example::get_message();
-	logging::info(msg);
+	auto fs = cmrc::test::get_filesystem();
+	auto data = fs.open("test.txt");
+	std::cout << std::string(data.begin(), data.end()) << '\n';
 }

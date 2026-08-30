@@ -9,6 +9,9 @@ include(../../pmm.cmake)
 
 pmm(CMakeCM ROLLING)
 
-add_executable(dummy-program main.cpp example.cpp log.cpp log.h example.h)
+include(CMakeRC)
 
-cotire(dummy-program)
+cmrc_add_resource_library(test ALIAS test::rc test.txt)
+
+add_executable(test-program main.cpp)
+target_link_libraries(test-program PRIVATE test::rc)
