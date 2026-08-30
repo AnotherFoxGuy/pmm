@@ -200,7 +200,7 @@ function(_pmm_vcpkg)
     )
 
     if (NOT DEFINED ARG_REVISION)
-        message(FATAL_ERROR "Using pmm(VCPKG) requires a REVISION argument. Try `REVISION 2020.04`")
+        message(FATAL_ERROR "Using pmm(VCPKG) requires a REVISION argument. Try `REVISION 2026.07.29`")
     endif ()
     if (NOT DEFINED ARG_TRIPLET)
         _pmm_vcpkg_default_triplet(ARG_TRIPLET)
