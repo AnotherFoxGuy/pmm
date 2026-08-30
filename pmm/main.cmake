@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.8)
+cmake_minimum_required(VERSION 3.30)
 
 if (NOT "$ENV{HOME}" STREQUAL "")
     set(_PMM_USER_HOME "$ENV{HOME}")
@@ -45,10 +45,6 @@ function(_pmm_project_fn)
         _pmm_cmcm(${ARG_CMakeCM})
         _pmm_lift(CMAKE_MODULE_PATH)
     endif ()
-    if(DEFINED ARG_DDS OR "DDS" IN_LIST ARGV)
-        _pmm_check_and_include_file(dds.cmake)
-        _pmm_dds(${ARG_DDS})
-    endif()
     _pmm_lift(_PMM_INCLUDE)
 endfunction()
 
